@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Match Challenge</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --accent: #f43f5e;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --light: #f3f4f6;
+            --dark: #1e293b;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--dark);
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .page {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            display: none;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .active-page {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        /* Start Page */
+        .start-page {
+            text-align: center;
+        }
+        
+        .game-title {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: var(--dark);
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            font-weight: 300;
+        }
+        
+        .game-description {
+            background-color: rgba(255, 255, 255, 0.5);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: left;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .game-description h3 {
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+        }
+        
+        .game-description p {
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .start-btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.6);
+        }
+        
+        .start-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .difficulty-selector {
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .difficulty-btn {
+            background-color: rgba(255, 255, 255, 0.7);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 12px 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .difficulty-btn.easy {
+            color: #10b981;
+        }
+        
+        .difficulty-btn.medium {
+            color: #f59e0b;
+        }
+        
+        .difficulty-btn.hard {
+            color: #ef4444;
+        }
+        
+        .difficulty-btn.active {
+            border-color: currentColor;
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .footer {
+            margin-top: 40px;
+            font-size: 0.9rem;
+            color: rgba(30, 41, 59, 0.7);
+        }
+        
+        /* Game Page */
+        .game-page {
+            text-align: center;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .back-btn {
+            background-color: transparent;
+            border: none;
+            color: var(--dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            color: var(--primary);
+        }
+        
+        .game-heading {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin: 0;
+        }
+        
+        .score-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+        
+        .score-box {
+            background-color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            min-width: 120px;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .score-box.score {
+            background: linear-gradient(45deg, #06b6d4, #0ea5e9);
+            color: white;
+        }
+        
+        .score-box.high-score {
+            background: linear-gradient(45deg, #f59e0b, #f97316);
+            color: white;
+        }
+        
+        .game-area {
+            margin: 25px 0;
+        }
+        
+        .color-display {
+            height: 150px;
+            width: 100%;
+            margin: 20px 0;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .word-display {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 25px 0;
+            height: 60px;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .options {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        
+        .option-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 140px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            letter-spacing: 1px;
+        }
+        
+        .match-btn {
+            background: linear-gradient(45deg, #10b981, #059669);
+            color: white;
+        }
+        
+        .match-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4);
+        }
+        
+        .no-match-btn {
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+            color: white;
+        }
+        
+        .no-match-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(239, 68, 68, 0.4);
+        }
+        
+        .option-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .timer-container {
+            margin-top: 30px;
+            position: relative;
+        }
+        
+        .timer {
+            height: 8px;
+            width: 100%;
+            background-color: rgba(30, 41, 59, 0.1);
+            border-radius: 50px;
+            overflow: hidden;
+        }
+        
+        .timer-bar {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(45deg, var(--accent), var(--danger));
+            transform-origin: left;
+            transition: transform 0.1s linear;
+            border-radius: 50px;
+        }
+        
+        /* Game Over Overlay */
+        .game-over {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border-radius: 16px;
+            animation: fadeIn 0.5s ease;
+            z-index: 10;
+        }
+        
+        .game-over-content {
+            text-align: center;
+            padding: 30px;
+            max-width: 400px;
+        }
+        
+        .game-over-title {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--danger);
+        }
+        
+        .game-over-score {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 20px 0;
+            color: var(--primary);
+        }
+        
+        .play-again-btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            margin-top: 20px;
+        }
+        
+        .play-again-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.6);
+        }
+        
+        /* Game History */
+        .history-container {
+            margin-top: 30px;
+            border-top: 1px solid rgba(30, 41, 59, 0.1);
+            padding-top: 20px;
+        }
+        
+        .history-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+            text-align: left;
+        }
+        
+        .history-list {
+            max-height: 150px;
+            overflow-y: auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid rgba(30, 41, 59, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-color {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        
+        .color-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .history-result {
+            font-weight: 600;
+        }
+        
+        .correct {
+            color: var(--success);
+        }
+        
+        .incorrect {
+            color: var(--danger);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .pulse {
+            animation: pulse 0.6s ease-in-out;
+        }
+        
+        /* Loading Animation */
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 5px solid var(--primary);
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes rotation {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* Confetti Animation for High Score */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary);
+            border-radius: 0;
+            will-change: transform;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Start Page -->
+        <div id="start-page" class="page start-page active-page">
+            <h1 class="game-title animate__animated animate__fadeInDown">Color Match Challenge</h1>
+            <p class="subtitle animate__animated animate__fadeIn animate__delay-1s">Test your reflexes and color perception!</p>
+            
+            <div class="game-description animate__animated animate__fadeIn animate__delay-1s">
+                <h3>How to Play</h3>
+                <p>1. You'll see a colored box and a color name.</p>
+                <p>2. Quickly decide if the name matches the actual color displayed.</p>
+                <p>3. Click <strong>MATCH</strong> if they match, or <strong>NO MATCH</strong> if they don't.</p>
+                <p>4. Be quick! The timer counts down for each decision.</p>
+            </div>
+            
+            <div class="difficulty-selector animate__animated animate__fadeIn animate__delay-1s">
+                <button class="difficulty-btn easy" data-value="easy">Easy</button>
+                <button class="difficulty-btn medium active" data-value="medium">Medium</button>
+                <button class="difficulty-btn hard" data-value="hard">Hard</button>
+            </div>
+            
+            <button id="start-game-btn" class="start-btn animate__animated animate__pulse animate__infinite animate__slow">START GAME</button>
+            
+            <p class="footer">Test your brain's ability to process conflicting information!</p>
+        </div>
+        
+        <!-- Game Page -->
+        <div id="game-page" class="page game-page">
+            <div class="header">
+                <button id="back-to-start" class="back-btn">← Back</button>
+                <h2 class="game-heading">Color Match</h2>
+                <div style="width: 50px;"></div> <!-- Spacer for symmetry -->
+            </div>
+            
+            <div class="score-container">
+                <div class="score-box score">Score: <span id="score">0</span></div>
+                <div class="score-box high-score">Best: <span id="high-score">0</span></div>
+            </div>
+            
+            <div class="game-area">
+                <div id="color-display" class="color-display"></div>
+                <div id="word-display" class="word-display"></div>
+                
+                <div class="options">
+                    <button id="match-btn" class="option-btn match-btn" disabled>MATCH</button>
+                    <button id="no-match-btn" class="option-btn no-match-btn" disabled>NO MATCH</button>
+                </div>
+                
+                <div class="timer-container">
+                    <div class="timer">
+                        <div id="timer-bar" class="timer-bar"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="history-container">
+                <h3 class="history-title">Recent Results</h3>
+                <div id="history-list" class="history-list"></div>
+            </div>
+            
+            <!-- Game Over Overlay -->
+            <div id="game-over" class="game-over">
+                <div class="game-over-content">
+                    <h2 class="game-over-title">Game Over!</h2>
+                    <p>Your final score:</p>
+                    <div class="game-over-score" id="final-score">0</div>
+                    <button id="play-again-btn" class="play-again-btn">Play Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pages
+            const startPage = document.getElementById('start-page');
+            const gamePage = document.getElementById('game-page');
+            
+            // Start page elements
+            const startGameBtn = document.getElementById('start-game-btn');
+            const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+            
+            // Game page elements
+            const backToStartBtn = document.getElementById('back-to-start');
+            const colorDisplay = document.getElementById('color-display');
+            const wordDisplay = document.getElementById('word-display');
+            const scoreElement = document.getElementById('score');
+            const highScoreElement = document.getElementById('high-score');
+            const matchBtn = document.getElementById('match-btn');
+            const noMatchBtn = document.getElementById('no-match-btn');
+            const timerBar = document.getElementById('timer-bar');
+            const gameOverElement = document.getElementById('game-over');
+            const finalScoreElement = document.getElementById('final-score');
+            const playAgainBtn = document.getElementById('play-again-btn');
+            const historyList = document.getElementById('history-list');
+            
+            // Game variables
+            const colors = {
+                'RED': '#f87171',
+                'BLUE': '#60a5fa',
+                'GREEN': '#4ade80',
+                'YELLOW': '#fbbf24',
+                'PURPLE': '#a78bfa',
+                'ORANGE': '#fb923c',
+                'PINK': '#f472b6',
+                'TEAL': '#2dd4bf'
+            };
+            
+            let colorNames = Object.keys(colors);
+            let colorValues = Object.values(colors);
+            let score = 0;
+            let highScore = localStorage.getItem('colorMatchHighScore') || 0;
+            let timerInterval;
+            let timerDuration = 3000; // Default medium difficulty (3 seconds)
+            let isGameActive = false;
+            let currentRound = {};
+            
+            // Initialize high score from local storage
+            highScoreElement.textContent = highScore;
+            
+            // Difficulty settings
+            const difficulties = {
+                'easy': 4000,
+                'medium': 3000,
+                'hard': 2000
+            };
+            
+            // Set up difficulty buttons
+            difficultyBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    difficultyBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    timerDuration = difficulties[this.dataset.value];
+                });
+            });
+            
+            // Page navigation
+            startGameBtn.addEventListener('click', function() {
+                startPage.classList.remove('active-page');
+                gamePage.classList.add('active-page');
+                init();
+                isGameActive = true;
+                nextRound();
+            });
+            
+            backToStartBtn.addEventListener('click', function() {
+                if (isGameActive) {
+                    if (!confirm('Are you sure you want to quit the current game?')) {
+                        return;
+                    }
+                }
+                gamePage.classList.remove('active-page');
+                startPage.classList.add('active-page');
+                isGameActive = false;
+                clearInterval(timerInterval);
+            });
+            
+            // Initialize game state
+            function init() {
+                score = 0;
+                scoreElement.textContent = score;
+                gameOverElement.style.display = 'none';
+                disableOptions(false);
+                resetTimerBar();
+                historyList.innerHTML = '';
+            }
+            
+            // Generate next round
+            function nextRound() {
+                if (!isGameActive) return;
+                
+                resetTimerBar();
+                disableOptions(false);
+                
+                // Select random color name and display color
+                const nameIndex = Math.floor(Math.random() * colorNames.length);
+                const colorIndex = Math.floor(Math.random() * colorValues.length);
+                
+                const colorName = colorNames[nameIndex];
+                const displayColor = colorValues[colorIndex];
+                
+                // Determine if it's a match (about 50% chance)
+                const isMatch = Math.random() > 0.5;
+                
+                // If it's a match, make the display color match the name
+                const finalDisplayColor = isMatch ? colors[colorName] : displayColor;
+                
+                // Save current round info
+                currentRound = {
+                    colorName: colorName,
+                    displayColor: finalDisplayColor,
+                    isMatch: isMatch
+                };
+                
+                // Update display with animation
+                colorDisplay.style.backgroundColor = finalDisplayColor;
+                colorDisplay.classList.add('pulse');
+                setTimeout(() => colorDisplay.classList.remove('pulse'), 600);
+                
+                wordDisplay.textContent = colorName;
+                wordDisplay.classList.add('animate__animated', 'animate__fadeIn');
+                setTimeout(() => wordDisplay.classList.remove('animate__animated', 'animate__fadeIn'), 500);
+                
+                // Start timer
+                startTimer();
+            }
+            
+            // Handle user answer
+            function checkAnswer(userAnswer) {
+                clearInterval(timerInterval);
+                
+                // Compare user's answer with the correct answer
+                const isCorrect = userAnswer === currentRound.isMatch;
+                
+                if (isCorrect) {
+                    score++;
+                    scoreElement.textContent = score;
+                    
+                    // Update high score if needed
+                    if (score > highScore) {
+                        highScore = score;
+                        highScoreElement.textContent = highScore;
+                        localStorage.setItem('colorMatchHighScore', highScore);
+                        createConfetti();
+                    }
+                    
+                    addToHistory(true);
+                    nextRound();
+                } else {
+                    addToHistory(false);
+                    gameOver();
+                }
+            }
+            
+            // Add result to history
+            function addToHistory(correct) {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                
+                const colorInfo = document.createElement('div');
+                colorInfo.className = 'history-color';
+                
+                const colorIndicator = document.createElement('span');
+                colorIndicator.className = 'color-indicator';
+                colorIndicator.style.backgroundColor = currentRound.displayColor;
+                
+                const colorText = document.createElement('span');
+                colorText.textContent = currentRound.colorName;
+                
+                colorInfo.appendChild(colorIndicator);
+                colorInfo.appendChild(colorText);
+                
+                const resultSpan = document.createElement('span');
+                resultSpan.textContent = correct ? '✓ Correct' : '✗ Wrong';
+                resultSpan.className = correct ? 'history-result correct' : 'history-result incorrect';
+                
+                historyItem.appendChild(colorInfo);
+                historyItem.appendChild(resultSpan);
+                
+                // Add with animation
+                historyItem.classList.add('animate__animated', 'animate__fadeInDown');
+                historyList.prepend(historyItem);
+                
+                // Keep only the last 8 items
+                if (historyList.children.length > 8) {
+                    historyList.removeChild(historyList.lastChild);
+                }
+            }
+            
+            // Start timer for current round
+            function startTimer() {
+                let timeLeft = timerDuration;
+                const startTime = Date.now();
+                
+                // Reset timer bar
+                timerBar.style.transform = 'scaleX(1)';
+                
+                timerInterval = setInterval(function() {
+                    const elapsed = Date.now() - startTime;
+                    const remaining = timerDuration - elapsed;
+                    
+                    if (remaining <= 0) {
+                        clearInterval(timerInterval);
+                        gameOver();
+                        return;
+                    }
+                    
+                    // Update timer bar
+                    timerBar.style.transform = `scaleX(${remaining / timerDuration})`;
+                }, 50);
+            }
+            
+            // Reset timer bar
+            function resetTimerBar() {
+                clearInterval(timerInterval);
+                timerBar.style.transform = 'scaleX(1)';
+            }
+            
+            // Enable/disable option buttons
+            function disableOptions(disabled) {
+                matchBtn.disabled = disabled;
+                noMatchBtn.disabled = disabled;
+            }
+            
+            // Game over
+            function gameOver() {
+                isGameActive = false;
+                clearInterval(timerInterval);
+                disableOptions(true);
+                
+                gameOverElement.style.display = 'flex';
+                finalScoreElement.textContent = score;
+                
+                // Animate elements
+                document.querySelector('.game-over-title').classList.add('animate__animated', 'animate__bounceIn');
+                finalScoreElement.classList.add('animate__animated', 'animate__fadeInUp');
+            }
+            
+            // Event listeners for buttons
+            matchBtn.addEventListener('click', function() {
+                matchBtn.classList.add('animate__animated', 'animate__pulse');
+                setTimeout(() => matchBtn.classList.remove('animate__animated', 'animate__pulse'), 300);
+                checkAnswer(true);
+            });
+            
+            noMatchBtn.addEventListener('click', function() {
+                noMatchBtn.classList.add('animate__animated', 'animate__pulse');
+                setTimeout(() => noMatchBtn.classList.remove('animate__animated', 'animate__pulse'), 300);
+                checkAnswer(false);
+            });
+            
+            playAgainBtn.addEventListener('click', function() {
+                gameOverElement.style.display = 'none';
+                init();
+                isGameActive = true;
+                nextRound();
+            });
+            
+            // Create confetti effect for new high score
+            function createConfetti() {
+                const confettiCount = 100;
+                const colors = ['#f87171', '#60a5fa', '#4ade80', '#fbbf24', '#a78bfa', '#fb923c'];
+                
+                for (let i = 0; i < confettiCount; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-10px';
+                    confetti.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
+                    
+                    gamePage.appendChild(confetti);
+                    
+                    // Animate falling
+                    const duration = Math.random() * 3 + 2;
+                    const delay = Math.random() * 2;
+                    
+                    confetti.animate([
+                        { top: '-10px', opacity: 1 },
+                        { top: '100%', opacity: 0 }
+                    ], {
+                        duration: duration * 1000,
+                        delay: delay * 1000,
+                        easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
+                        iterations: 1,
+                        fill: 'forwards'
+                    });
+                    
+                    // Remove after animation
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, (duration + delay) * 1000);
+                }
+            }
+            
+            // Preload page
+            init();
+        });
+    </script>
+</body>
+</html>
